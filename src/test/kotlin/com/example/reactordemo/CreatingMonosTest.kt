@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
-class BCreatingMonosTest() {
+class CreatingMonosTest() {
 
     /*
             How to create a Mono

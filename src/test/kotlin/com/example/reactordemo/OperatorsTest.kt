@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 
-class DOperatorsTest() {
+class OperatorsTest() {
 
     /*
     Basic Operators

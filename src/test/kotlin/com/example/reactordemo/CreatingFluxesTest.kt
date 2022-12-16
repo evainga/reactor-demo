@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
-class CCreatingFluxesTest() {
+class CreatingFluxesTest() {
 
     /*
         How to create a Flux

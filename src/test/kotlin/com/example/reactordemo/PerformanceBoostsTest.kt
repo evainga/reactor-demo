@@ -9,7 +9,7 @@ import reactor.test.StepVerifier
 import java.lang.Thread.currentThread
 
 
-class EPerformanceBoostsTest() {
+class PerformanceBoostsTest() {
 
     /*
     some additional performance boosts

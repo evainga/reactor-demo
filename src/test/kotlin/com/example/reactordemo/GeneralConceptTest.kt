@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
-class AGeneralConceptTest() {
+class GeneralConceptTest() {
 
     /* General Introduction to Reactor
     TODO
