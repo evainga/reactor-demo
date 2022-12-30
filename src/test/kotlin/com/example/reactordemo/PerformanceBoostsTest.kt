@@ -1,19 +1,18 @@
 package com.example.reactordemo
 
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import reactor.core.observability.micrometer.Micrometer
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers.boundedElastic
 import reactor.test.StepVerifier
+import reactor.test.publisher.TestPublisher
 import java.lang.Thread.currentThread
 
-
 class PerformanceBoostsTest() {
-
-    /*
-    some additional performance boosts
-    */
 
     @Test
     fun `avoid re-executing the same mono with cache operator`() {
@@ -23,7 +22,7 @@ class PerformanceBoostsTest() {
             BREEZE
         }
 
-        // Apply the cache operator to the Mono
+        // Apply the cache operator
         val cachedMono = mono.cache()
 
         // Subscribe to the Mono
@@ -38,12 +37,26 @@ class PerformanceBoostsTest() {
     }
 
 
-    /*
-    Additionally, using the subscribeOn operator with a reactive Scheduler such as Schedulers.boundedElastic()
-    can further improve the performance of the Mono by executing the code on a separate thread or thread pool.
-     This can reduce the impact of long-running or blocking code on the main thread and improve the responsiveness
-     of the application.
-    */
+    @Test
+    fun `show caching with TestPublisher`() {
+        val executeHeavyOperation: () -> Mono<String> = mockk()
+
+        val testPublisher = TestPublisher.createCold<String>().also { it.emit(FREEZE) }
+        every { executeHeavyOperation() } answers { testPublisher.mono() }
+
+        // Apply the cache operator
+        val cachedMono = executeHeavyOperation().cache()
+
+        StepVerifier.create(Mono.zip(cachedMono, cachedMono, cachedMono, cachedMono))
+            .expectNextCount(1)
+            .then {
+                assertThat(testPublisher.subscribeCount()).isEqualTo(1)
+            }
+            .verifyComplete()
+
+        verify(exactly = 1) { executeHeavyOperation() }
+    }
+
     @Test
     fun `subscribe on with reactive scheduler`() {
 
@@ -64,20 +77,26 @@ class PerformanceBoostsTest() {
             .verifyComplete()
     }
 
-    /*
-
-    ParallelFlux
-
-    Working with MongoDB
-    .collectList -> @Meta(batchsize)
-
-    */
     @Test
-    fun `use metrics of mono`() {
+    fun `use parallel flux`() {
 
-        val mono = Mono.just(BREEZE)
-            .tap(Micrometer.metrics(mockk()))
+        val parallelFlux =
 
+            Flux.range(1, 10)
+                .parallel(5)     // alternative: ParallelFlux.from(Flux.range(1, 10), 5)
+                .runOn(boundedElastic())
+                .map {
+                    println(currentThread().name)
+                    it
+                }
+
+        StepVerifier.create(parallelFlux)
+            .recordWith { mutableListOf<Int>() }
+            .thenConsumeWhile { true }
+            .consumeRecordedWith {
+                assertThat(it).containsAll((1..10))
+            }
+            .verifyComplete()
     }
 
 }

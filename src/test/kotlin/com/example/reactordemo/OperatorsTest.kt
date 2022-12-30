@@ -7,17 +7,9 @@ import reactor.test.StepVerifier
 
 
 class OperatorsTest() {
-
-    /*
-    Basic Operators
-    */
-
-    /*
-    usage of map operator to transform the value emitted by a Mono or Flux by applying a function to it
-     */
-
+    
     @Test
-    fun `example for map with mono`() {
+    fun `example for map operator to transform value of mono`() {
 
         val mono = Mono.just("123")
             .map { it.toInt() }
@@ -28,7 +20,7 @@ class OperatorsTest() {
     }
 
     @Test
-    fun `example for map with flux`() {
+    fun `example for map to transform values of flux`() {
 
         val flux = Flux.just("1", "2", "3")
             .map { it.toInt() }
@@ -40,13 +32,8 @@ class OperatorsTest() {
             .verifyComplete()
     }
 
-    /*
-    The flatMap operator can be used to flatten a Mono or Flux that emits a value of a nested type
-    into a Mono or Flux that emits the values of the nested type.
-    */
-
     @Test
-    fun `example for flatMap with mono`() {
+    fun `example for flatMap to flatten a mono`() {
         val mono = Mono.just(BREEZE)
             .flatMap { Mono.just(it) }
 
@@ -56,7 +43,7 @@ class OperatorsTest() {
     }
 
     @Test
-    fun `example for flatMap with flux`() {
+    fun `example for flatMap to flatten a flux`() {
         val flux = Flux.just(FREEZE, BREEZE)
             .flatMap { Mono.just(it) }
 
@@ -83,10 +70,8 @@ class OperatorsTest() {
             .verifyComplete()
     }
 
-
-    /* combine the values emitted by multiple Mono instances into a single Mono that emits a tuple of the combined values.*/
     @Test
-    fun `example for zip`() {
+    fun `example for combining values emitted by multiple monos using the zip operator`() {
 
         val mono1 = Mono.just(BREEZE)
         val mono2 = Mono.just(FREEZE)

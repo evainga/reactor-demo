@@ -5,11 +5,7 @@ import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
 class CreatingFluxesTest() {
-
-    /*
-        How to create a Flux
-    */
-
+    
     @Test
     fun `create Flux`() {
         val flux = Flux.just(FREEZE, BREEZE)

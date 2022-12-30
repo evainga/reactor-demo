@@ -1,23 +1,11 @@
 package com.example.reactordemo
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 class GeneralConceptTest() {
-
-    /* General Introduction to Reactor
-    TODO
-        https://medium.com/intuit-engineering/reactive-programming-project-reactor-webflux-oh-my-4bfa470feee7
-    */
-
-    /*   our use case
-    TODO
-     */
-
-    /*
-    Flux vs. Mono  // creation and subscription
-    */
 
     @Test
     fun `without subscription content is not printed to console`() {
@@ -36,13 +24,40 @@ class GeneralConceptTest() {
     }
 
     @Test
+    fun `showcase for blocking mono`() {
+        val mono = Mono.just(FREEZE)
+
+        val block: String? = mono.block()
+
+        assertThat(block).isEqualTo(FREEZE)
+    }
+
+    @Test
+    fun `showcase for blocking empty mono`() {
+
+        val mono = Mono.empty<String>()
+
+        val block: String? = mono.block()
+
+        assertThat(block).isEqualTo(null)
+    }
+
+    @Test
     fun `use stepVerifier for tests`() {
-        println("Executing test")
 
         val mono = Mono.just(FREEZE)
 
         StepVerifier.create(mono)
             .expectNext(FREEZE)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `use stepVerifier for tests with empty mono`() {
+
+        val mono = Mono.empty<String>()
+
+        StepVerifier.create(mono)
             .verifyComplete()
     }
 }

@@ -5,15 +5,7 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 class CreatingMonosTest() {
-
-    /*
-            How to create a Mono
-
-            other possibilies:
-            Mono.fromSupplier
-            Mono.fromFuture
-            ...
-    */
+    
     @Test
     fun `create Mono`() {
         val mono = Mono.just(FREEZE)
@@ -51,6 +43,13 @@ class CreatingMonosTest() {
             .expectNext(FREEZE)
             .verifyComplete()
     }
+
+    /*
+        other possibilies:
+        Mono.fromSupplier
+        Mono.fromFuture
+        ...
+    */
 
     @Test
     fun `empty Mono`() {
