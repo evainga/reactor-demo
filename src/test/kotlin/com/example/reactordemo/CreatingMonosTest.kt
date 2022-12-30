@@ -1,11 +1,12 @@
 package com.example.reactordemo
 
+import com.example.FREEZE
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 class CreatingMonosTest() {
-    
+
     @Test
     fun `create Mono`() {
         val mono = Mono.just(FREEZE)
@@ -37,7 +38,7 @@ class CreatingMonosTest() {
 
     @Test
     fun `create Mono from Mono`() {
-        val mono = Mono.from(Mono.just(FREEZE))
+        val mono: Mono<String> = Mono.from(Mono.just(FREEZE))
 
         StepVerifier.create(mono)
             .expectNext(FREEZE)
@@ -66,6 +67,7 @@ class CreatingMonosTest() {
         StepVerifier.create(mono)
             .expectError(IllegalStateException::class.java)
             .verify()
+//            .verifyComplete()
     }
 
 }

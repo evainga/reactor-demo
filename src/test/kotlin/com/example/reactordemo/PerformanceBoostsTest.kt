@@ -1,5 +1,7 @@
 package com.example.reactordemo
 
+import com.example.BREEZE
+import com.example.FREEZE
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -25,12 +27,12 @@ class PerformanceBoostsTest() {
         // Apply the cache operator
         val cachedMono = mono.cache()
 
-        // Subscribe to the Mono
+        // Subscribe first time to the Mono
         StepVerifier.create(cachedMono)
             .expectNext(BREEZE)
             .verifyComplete()
 
-        // Subscribe to the Mono again
+        // Subscribe second time to the Mono
         StepVerifier.create(cachedMono)
             .expectNext(BREEZE)
             .verifyComplete()
@@ -39,22 +41,20 @@ class PerformanceBoostsTest() {
 
     @Test
     fun `show caching with TestPublisher`() {
-        val executeHeavyOperation: () -> Mono<String> = mockk()
+        val heavyOperation: () -> Mono<String> = mockk()
 
         val testPublisher = TestPublisher.createCold<String>().also { it.emit(FREEZE) }
-        every { executeHeavyOperation() } answers { testPublisher.mono() }
+        every { heavyOperation() } answers { testPublisher.mono() }
 
         // Apply the cache operator
-        val cachedMono = executeHeavyOperation().cache()
+        val cachedMono = heavyOperation().cache()
 
         StepVerifier.create(Mono.zip(cachedMono, cachedMono, cachedMono, cachedMono))
             .expectNextCount(1)
-            .then {
-                assertThat(testPublisher.subscribeCount()).isEqualTo(1)
-            }
+            .then { assertThat(testPublisher.subscribeCount()).isEqualTo(1) }
             .verifyComplete()
 
-        verify(exactly = 1) { executeHeavyOperation() }
+        verify(exactly = 1) { heavyOperation() }
     }
 
     @Test

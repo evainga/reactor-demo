@@ -1,5 +1,7 @@
 package com.example.reactordemo
 
+import com.example.BREEZE
+import com.example.FREEZE
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -7,7 +9,7 @@ import reactor.test.StepVerifier
 
 
 class OperatorsTest() {
-    
+
     @Test
     fun `example for map operator to transform value of mono`() {
 
@@ -25,6 +27,7 @@ class OperatorsTest() {
         val flux = Flux.just("1", "2", "3")
             .map { it.toInt() }
 
+        // sequential mapping
         StepVerifier.create(flux)
             .expectNext(1)
             .expectNext(2)
@@ -34,8 +37,8 @@ class OperatorsTest() {
 
     @Test
     fun `example for flatMap to flatten a mono`() {
-        val mono = Mono.just(BREEZE)
-            .flatMap { Mono.just(it) }
+        val mono: Mono<String> = Mono.just(BREEZE)
+            .flatMap { Mono.just(it) } // .flatMap returns Mono<String> instead of Mono<Mono<String>> with .map
 
         StepVerifier.create(mono)
             .expectNext(BREEZE)
@@ -44,8 +47,8 @@ class OperatorsTest() {
 
     @Test
     fun `example for flatMap to flatten a flux`() {
-        val flux = Flux.just(FREEZE, BREEZE)
-            .flatMap { Mono.just(it) }
+        val flux: Flux<String> = Flux.just(FREEZE, BREEZE)
+            .flatMap { element -> Mono.just(element) } // .flatMap returns Flux<String> instead of Flux<Mono<String>> with .map
 
         StepVerifier.create(flux)
             .expectNext(FREEZE)

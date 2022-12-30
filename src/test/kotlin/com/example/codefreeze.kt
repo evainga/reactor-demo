@@ -1,4 +1,4 @@
-package com.example.reactordemo
+package com.example
 
 
 const val FREEZE = "freeze"
