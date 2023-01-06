@@ -4,13 +4,31 @@ import com.example.BREEZE
 import com.example.FREEZE
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
+import reactor.kotlin.core.publisher.toFlux
 import reactor.test.StepVerifier
 
 class CreatingFluxesTest() {
-    
+
     @Test
     fun `create Flux`() {
         val flux = Flux.just(FREEZE, BREEZE)
+        StepVerifier.create(flux)
+            .expectNext(FREEZE)
+            .expectNext(BREEZE)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `empty flux`() {
+        val flux = Flux.empty<String>()
+
+        StepVerifier.create(flux)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `create Flux with Kotlin extension`() {
+        val flux = listOf(FREEZE, BREEZE).toFlux()
         StepVerifier.create(flux)
             .expectNext(FREEZE)
             .expectNext(BREEZE)
@@ -47,15 +65,7 @@ class CreatingFluxesTest() {
             .expectNextCount(7) // shortcut
             .verifyComplete()
     }
-
-    @Test
-    fun `empty flux`() {
-        val flux = Flux.empty<String>()
-
-        StepVerifier.create(flux)
-            .verifyComplete()
-    }
-
+    
     @Test
     fun `create Flux from error`() {
         val flux = Flux.error<String>(IllegalStateException("Oops!"))

@@ -94,6 +94,7 @@ class PerformanceBoostsTest() {
             .recordWith { mutableListOf<Int>() }
             .thenConsumeWhile { true }
             .consumeRecordedWith {
+                println(it)
                 assertThat(it).containsAll((1..10))
             }
             .verifyComplete()

@@ -3,6 +3,7 @@ package com.example.reactordemo
 import com.example.FREEZE
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import reactor.test.StepVerifier
 
 class CreatingMonosTest() {
@@ -13,6 +14,22 @@ class CreatingMonosTest() {
 
         StepVerifier.create(mono)
             .expectNext(FREEZE)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `empty Mono with Kotlin extension`() {
+        val publisher = FREEZE.toMono()
+
+        StepVerifier.create(publisher)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `empty Mono`() {
+        val publisher = Mono.empty<String>()
+
+        StepVerifier.create(publisher)
             .verifyComplete()
     }
 
@@ -51,14 +68,6 @@ class CreatingMonosTest() {
         Mono.fromFuture
         ...
     */
-
-    @Test
-    fun `empty Mono`() {
-        val publisher = Mono.empty<String>()
-
-        StepVerifier.create(publisher)
-            .verifyComplete()
-    }
 
     @Test
     fun `create Mono from error`() {

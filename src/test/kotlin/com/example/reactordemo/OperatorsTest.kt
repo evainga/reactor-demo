@@ -36,6 +36,20 @@ class OperatorsTest() {
     }
 
     @Test
+    fun `example for filtering even numbers`() {
+
+        val flux = Flux.just("1", "2", "3", "4")
+            .map { it.toInt() }
+            .filter { it % 2 == 0 }
+
+        // sequential mapping
+        StepVerifier.create(flux)
+            .expectNext(2)
+            .expectNext(4)
+            .verifyComplete()
+    }
+
+    @Test
     fun `example for flatMap to flatten a mono`() {
         val mono: Mono<String> = Mono.just(BREEZE)
             .flatMap { Mono.just(it) } // .flatMap returns Mono<String> instead of Mono<Mono<String>> with .map
