@@ -13,6 +13,7 @@ import reactor.core.scheduler.Schedulers.boundedElastic
 import reactor.test.StepVerifier
 import reactor.test.publisher.TestPublisher
 import java.lang.Thread.currentThread
+import java.time.Duration
 
 class PerformanceBoostsTest() {
 
@@ -97,6 +98,23 @@ class PerformanceBoostsTest() {
                 println(it)
                 assertThat(it).containsAll((1..10))
             }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `use backpressure`() {
+
+        val flux = Flux.range(1, 20)
+            .map {
+                println(it)
+                it
+            }
+            .buffer(2)
+            .delayElements(Duration.ofSeconds(1))
+            .flatMap { Flux.fromIterable(it) }
+
+        StepVerifier.create(flux)
+            .expectNextCount(20)
             .verifyComplete()
     }
 
