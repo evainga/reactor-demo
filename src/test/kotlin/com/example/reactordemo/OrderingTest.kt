@@ -49,11 +49,12 @@ class OrderingTest {
     }
 
     @Test
-    fun `sequential flatMapping`() {
+    fun `flatMap vs sequentialFlatMap`() {
         val numbers = Flux.just(1, 2, 3, 4, 5)
 
+        // FLATMAP
         val flatMapped = numbers
-            .flatMap { Flux.just(it.toString() + FREEZE).delayElements(Duration.ofMillis(100)) }
+            .flatMap { Flux.just("$it $FREEZE").delayElements(Duration.ofMillis(100)) }
 
         StepVerifier.create(flatMapped)
             .recordWith { mutableListOf<String>() }
@@ -61,8 +62,9 @@ class OrderingTest {
             .consumeRecordedWith { println("flatMap: $it") }
             .verifyComplete()
 
+        // FLATMAP SEQUENTIAL
         val flatMappedSequential = numbers
-            .flatMapSequential { Flux.just(it.toString() + BREEZE).delayElements(Duration.ofMillis(100)) }
+            .flatMapSequential { Flux.just("$it $BREEZE").delayElements(Duration.ofMillis(100)) }
 
         StepVerifier.create(flatMappedSequential)
             .recordWith { mutableListOf<String>() }

@@ -75,10 +75,7 @@ class OperatorsTest() {
     fun `combine a mono value with flux with flatMapMany`() {
         val flux: Flux<String> =
             Mono.just(BREEZE)
-                .flatMapMany { breeze ->
-                    Flux.just(1, 2, 3)
-                        .map { number -> "$number$breeze" }
-                }
+                .flatMapMany { Flux.just(1, 2, 3).map { number -> "$number$it" } }
 
         StepVerifier.create(flux)
             .expectNext("1breeze")

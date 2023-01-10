@@ -1,10 +1,13 @@
 package com.example.reactordemo
 
+import com.example.FREEZE
+import org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Duration
 
 @RestController
 class ParticipantController(
@@ -17,9 +20,14 @@ class ParticipantController(
             .map { it.name }
     }
 
-    @GetMapping("/all")
-    fun getAllParticipants(): Flux<String> {
+    @GetMapping("/participants")
+    fun getAllAsJson(): Flux<String> {
         return repository.findAll()
-            .map { it.name + " " }
+            .map { it.name }
+    }
+
+    @GetMapping("/sse", produces = [TEXT_EVENT_STREAM_VALUE])
+    fun getAllAsSse(): Flux<String> {
+        return Flux.range(1, 100).map { "$FREEZE $it" }.delayElements(Duration.ofMillis(100))
     }
 }

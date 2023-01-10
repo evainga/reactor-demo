@@ -3,10 +3,11 @@ package com.example.reactordemo
 import com.example.FREEZE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
-class GeneralConceptTest() {
+class AGeneralConceptTest() {
 
     @Test
     fun `without subscription content is not printed to console`() {
@@ -21,16 +22,16 @@ class GeneralConceptTest() {
 
         val mono = Mono.create<String> { println("Executing code") }
 
-        mono.subscribe()
+        val subscribe: Disposable = mono.subscribe()
     }
 
     @Test
     fun `showcase for blocking mono`() {
         val mono = Mono.just(FREEZE)
 
-        val block: String? = mono.block()
+        val blockedMono: String? = mono.block()
 
-        assertThat(block).isEqualTo(FREEZE)
+        assertThat(blockedMono).isEqualTo(FREEZE)
     }
 
     @Test
